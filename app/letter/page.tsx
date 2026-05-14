@@ -22,7 +22,8 @@ export default async function LetterListPage() {
     .order("created_at", { ascending: false });
 
   const openRooms = (rooms ?? []).filter((r: Room) => r.status === "open");
-  const closedRooms = (rooms ?? []).filter((r: Room) => r.status !== "open");
+  const startedRooms = (rooms ?? []).filter((r: Room) => r.status === "started");
+  const closedRooms = (rooms ?? []).filter((r: Room) => r.status === "closed");
 
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12">
@@ -49,10 +50,24 @@ export default async function LetterListPage() {
           </div>
         )}
 
-        {/* 시작된 / 마감된 방 */}
+        {/* 편지 작성 중인 방 (started) — 기존 참여자 재입장 가능 */}
+        {startedRooms.length > 0 && (
+          <div className="mb-8">
+            <MonoLabel caps className="block mb-4">편지 작성 중</MonoLabel>
+            <div className="flex flex-col gap-3">
+              {startedRooms.map((room: Room) => (
+                <Link key={room.id} href={`/letter/room/${room.id}`} className="block">
+                  <RoomCard room={room} disabled={false} />
+                </Link>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 마감된 방 */}
         {closedRooms.length > 0 && (
           <div>
-            <MonoLabel caps className="block mb-4">진행 중 / 마감</MonoLabel>
+            <MonoLabel caps className="block mb-4">마감</MonoLabel>
             <div className="flex flex-col gap-3 opacity-50">
               {closedRooms.map((room: Room) => (
                 <RoomCard key={room.id} room={room} disabled />
