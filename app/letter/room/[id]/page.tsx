@@ -47,6 +47,8 @@ export default function RoomPage() {
   const [checkingMatch, setCheckingMatch] = useState(false);
   const [error, setError] = useState("");
 
+  const isStarted = room?.status === "started";
+
   useEffect(() => {
     supabase
       .from("rooms")
@@ -82,7 +84,7 @@ export default function RoomPage() {
 
     if (existing) { await loadMemberState(existing); return; }
 
-    if (room?.status !== "open") { setError("이 방은 더 이상 입장할 수 없습니다."); return; }
+    if (room?.status !== "open") { setError("등록된 전화번호를 찾을 수 없습니다. 이름으로 찾아보세요."); return; }
 
     const res = await fetch("/api/room-member/join", {
       method: "POST",
@@ -94,20 +96,34 @@ export default function RoomPage() {
     await loadMemberState(newMember);
   }
 
-  async function handleNameOnlyJoin() {
+  async function handleNameOnlyAction() {
     if (!nameOnly.trim()) { setError("이름을 입력해주세요."); return; }
-    if (room?.status !== "open") { setError("이 방은 더 이상 입장할 수 없습니다."); return; }
     setError("");
     setLoading(true);
-    const res = await fetch("/api/room-member/join", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ roomId: id, name: nameOnly.trim(), phone: "" }),
-    });
-    setLoading(false);
-    if (!res.ok) { setError("입장에 실패했습니다."); return; }
-    const { member: newMember } = await res.json();
-    await loadMemberState(newMember);
+
+    if (isStarted) {
+      // 방이 시작된 경우 — 기존 멤버 이름으로 찾기
+      const { data: found } = await supabase
+        .from("room_members")
+        .select("id, name, matched_to_id")
+        .eq("room_id", id)
+        .eq("name", nameOnly.trim())
+        .maybeSingle();
+      setLoading(false);
+      if (!found) { setError("입력하신 이름으로 등록된 멤버를 찾을 수 없습니다."); return; }
+      await loadMemberState(found);
+    } else {
+      // 방이 열린 경우 — 새로 입장
+      const res = await fetch("/api/room-member/join", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ roomId: id, name: nameOnly.trim(), phone: "" }),
+      });
+      setLoading(false);
+      if (!res.ok) { setError("입장에 실패했습니다."); return; }
+      const { member: newMember } = await res.json();
+      await loadMemberState(newMember);
+    }
   }
 
   async function loadMemberState(m: Member) {
@@ -177,9 +193,15 @@ export default function RoomPage() {
           )}
         </div>
 
-        {/* 인증 */}
+        {/* 인증 / 멤버 찾기 */}
         {step === "auth" && (
           <div>
+            {isStarted && (
+              <div className="bg-[var(--paper)] rounded-[14px] px-4 py-3 mb-5 border border-[var(--line-soft)]">
+                <p className="text-body-sm text-[var(--muted)]">이미 입장하셨나요? 이름 또는 전화번호로 다시 찾을 수 있습니다.</p>
+              </div>
+            )}
+
             <div className="flex gap-2 mb-6">
               <button
                 onClick={() => setAuthMode("phone")}
@@ -191,7 +213,7 @@ export default function RoomPage() {
                 onClick={() => setAuthMode("name-only")}
                 className={`flex-1 py-2 rounded-[10px] text-body-sm transition-colors ${authMode === "name-only" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)] text-[var(--muted)] border border-[var(--line)]"}`}
               >
-                이름만으로 입장
+                {isStarted ? "이름으로 찾기" : "이름만으로 입장"}
               </button>
             </div>
 
@@ -201,16 +223,19 @@ export default function RoomPage() {
 
             {authMode === "name-only" && (
               <div className="flex flex-col gap-3">
-                <p className="text-body-sm text-[var(--muted)]">SMS를 받을 수 없습니다.</p>
+                {!isStarted && (
+                  <p className="text-body-sm text-[var(--muted)]">SMS를 받을 수 없습니다.</p>
+                )}
                 <input
                   type="text"
-                  placeholder="이름"
+                  placeholder="입장할 때 입력한 이름"
                   value={nameOnly}
                   onChange={(e) => setNameOnly(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleNameOnlyAction()}
                   className="w-full px-4 py-3 rounded-[14px] bg-[var(--paper)] border border-[var(--line)] text-body-md text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--accent)]"
                 />
-                <Button arrow onClick={handleNameOnlyJoin} disabled={loading}>
-                  {loading ? "입장 중..." : "입장하기"}
+                <Button arrow onClick={handleNameOnlyAction} disabled={loading}>
+                  {loading ? "확인 중..." : isStarted ? "찾기" : "입장하기"}
                 </Button>
               </div>
             )}
