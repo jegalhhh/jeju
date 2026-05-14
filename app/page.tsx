@@ -7,7 +7,7 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] flex flex-col items-center justify-center px-7 py-16">
       {/* 헤더 */}
-      <div className="w-full max-w-[390px] mb-14 text-center">
+      <div className="w-full max-w-[390px] mb-8 text-center">
         <MonoLabel caps className="block mb-4">
           제주 · No.001
         </MonoLabel>
