@@ -1,26 +1,197 @@
 @import "tailwindcss";
 
+/* ─── 제주 바다 (default) ─── */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg:              #f1ece1;
+  --paper:           #faf6ec;
+  --ink:             #1d2a2a;
+  --muted:           #6e7d7b;
+  --line:            rgba(29, 42, 42, 0.18);
+  --line-soft:       rgba(29, 42, 42, 0.08);
+  --accent:          #2c5752;
+  --accent-soft:     #8aa5a1;
+  --envelope:        #e6d6b6;
+  --envelope-flap:   #d8c69a;
+  --stamp:           #b56a3e;
+
+  --transition-palette: 0.5s ease;
+}
+
+/* ─── 일출 (sunrise) ─── */
+[data-palette="sunrise"] {
+  --bg:              #fbeede;
+  --paper:           #fff7ea;
+  --ink:             #2a1a12;
+  --muted:           #836755;
+  --line:            rgba(42, 26, 18, 0.18);
+  --line-soft:       rgba(42, 26, 18, 0.08);
+  --accent:          #c25a3d;
+  --accent-soft:     #e7a884;
+  --envelope:        #f4d8b9;
+  --envelope-flap:   #ecca9a;
+  --stamp:           #9c3f22;
+}
+
+/* ─── 현무암 (basalt) ─── */
+[data-palette="basalt"] {
+  --bg:              #e6e3dc;
+  --paper:           #f4f1ea;
+  --ink:             #1a1815;
+  --muted:           #67635c;
+  --line:            rgba(26, 24, 21, 0.18);
+  --line-soft:       rgba(26, 24, 21, 0.08);
+  --accent:          #2f2c28;
+  --accent-soft:     #948e85;
+  --envelope:        #cfc7b6;
+  --envelope-flap:   #bfb5a2;
+  --stamp:           #58524a;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg:            var(--bg);
+  --color-paper:         var(--paper);
+  --color-ink:           var(--ink);
+  --color-muted:         var(--muted);
+  --color-accent:        var(--accent);
+  --color-accent-soft:   var(--accent-soft);
+  --color-envelope:      var(--envelope);
+  --color-stamp:         var(--stamp);
+
+  --font-serif:  var(--font-noto-serif);
+  --font-sans:   var(--font-gowun);
+  --font-hand:   var(--font-nanum-pen);
+  --font-mono:   var(--font-jetbrains);
+
+  --spacing-gutter:   28px;
+  --spacing-card-pad: 24px;
+  --spacing-step-pad: 18px;
+
+  --radius-xs:  6px;
+  --radius-sm:  8px;
+  --radius-md:  14px;
+  --radius-lg:  18px;
+  --radius-xl:  28px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+*,
+*::before,
+*::after {
+  transition:
+    background-color var(--transition-palette),
+    border-color     var(--transition-palette),
+    color            var(--transition-palette);
+}
+
+html {
+  background: var(--bg);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-gowun, "Gowun Dodum"), sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── 타이포그래피 유틸 ─── */
+.text-display {
+  font-family: var(--font-noto-serif, "Noto Serif KR"), serif;
+  font-size: 56px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.text-headline-lg {
+  font-family: var(--font-noto-serif, "Noto Serif KR"), serif;
+  font-size: 26px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+.text-headline-md {
+  font-family: var(--font-noto-serif, "Noto Serif KR"), serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.text-headline-sm {
+  font-family: var(--font-noto-serif, "Noto Serif KR"), serif;
+  font-size: 17px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+.text-body-serif {
+  font-family: var(--font-noto-serif, "Noto Serif KR"), serif;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.85;
+}
+.text-body-md {
+  font-family: var(--font-gowun, "Gowun Dodum"), sans-serif;
+  font-size: 14.5px;
+  font-weight: 400;
+  line-height: 1.7;
+  letter-spacing: -0.005em;
+}
+.text-body-sm {
+  font-family: var(--font-gowun, "Gowun Dodum"), sans-serif;
+  font-size: 13.5px;
+  font-weight: 400;
+  line-height: 1.6;
+}
+.text-hand-lg {
+  font-family: var(--font-nanum-pen, "Nanum Pen Script"), cursive;
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--accent);
+}
+.text-hand-md {
+  font-family: var(--font-nanum-pen, "Nanum Pen Script"), cursive;
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--accent);
+}
+.text-hand-sm {
+  font-family: var(--font-nanum-pen, "Nanum Pen Script"), cursive;
+  font-size: 22px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+.text-label-caps {
+  font-family: var(--font-jetbrains, "JetBrains Mono"), monospace;
+  font-size: 10.5px;
+  font-weight: 500;
+  line-height: 1.6;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+.text-label-mono {
+  font-family: var(--font-jetbrains, "JetBrains Mono"), monospace;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+.text-caption-mono {
+  font-family: var(--font-jetbrains, "JetBrains Mono"), monospace;
+  font-size: 9.5px;
+  font-weight: 400;
+  line-height: 1.6;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+/* ─── 봉투 열림 애니메이션 ─── */
+@keyframes envelope-open {
+  from { transform: rotateX(0deg); }
+  to   { transform: rotateX(180deg); }
+}
+.envelope-flap-open {
+  animation: envelope-open 0.7s ease forwards;
+  transform-origin: top center;
 }
