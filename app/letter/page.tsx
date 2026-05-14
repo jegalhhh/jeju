@@ -83,6 +83,12 @@ export default async function LetterListPage() {
         )}
       </div>
 
+      <div className="mt-10 text-center">
+        <Link href="/letter/recover" className="text-body-sm text-[var(--muted)] underline underline-offset-2">
+          입장했던 방을 찾으시나요? →
+        </Link>
+      </div>
+
       <PaletteToggle />
     </main>
   );
