@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import PhoneAuth from "@/components/PhoneAuth";
 import MonoLabel from "@/components/ui/MonoLabel";
+import BackButton from "@/components/ui/BackButton";
 import { supabase } from "@/lib/supabase";
 
 interface PendingRoom {
@@ -54,6 +55,7 @@ export default function RecoverPage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12">
       <div className="max-w-[390px] mx-auto">
+        <div className="mb-6"><BackButton /></div>
         <div className="mb-10">
           <MonoLabel caps className="block mb-3">배편 서신</MonoLabel>
           <h1 className="text-headline-lg text-[var(--ink)]">내 방 찾기</h1>

@@ -52,7 +52,7 @@ export default function WishPage() {
           <MonoLabel caps className="block mb-3">성산일출봉 · 소원</MonoLabel>
           <h1 className="text-headline-lg text-[var(--ink)]">소원 빌기</h1>
           <p className="text-body-md text-[var(--ink)] mt-2">
-            제주에서 빈 소원과 사진을 봉이가 읽습니다. 내륙에 돌아오면, 봉이의 편지가 문자로 도착합니다.
+            제주에서 빈 소원과 사진을 봉이가 읽습니다.<br />내륙에 돌아오면, 봉이의 편지가 문자로 도착합니다.
           </p>
         </div>
 

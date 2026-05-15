@@ -36,7 +36,7 @@ export default function LetterPageClient({ rooms }: Props) {
           <MonoLabel caps className="block mb-3">배편 서신 · 바람이</MonoLabel>
           <h1 className="text-headline-lg text-[var(--ink)]">배편 서신</h1>
           <p className="text-body-md text-[var(--ink)] mt-2">
-            제주에서 만난 사람들과 편지를 교환해 보세요. 매칭된 상대에게 편지를 써서 보내면, 약속된 날 문자로 전해집니다.
+            제주에서 만난 사람들과 편지를 교환해 보세요.<br />매칭된 상대에게 편지를 써서 보내면, 약속된 날 문자로 전해집니다.
           </p>
         </div>
 
