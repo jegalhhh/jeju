@@ -28,7 +28,6 @@ interface MatchedMember {
 }
 
 type PageStep = "loading" | "auth" | "waiting" | "write" | "submitted";
-type AuthMode = "phone" | "name-only";
 
 function memberKey(roomId: string) {
   return `room_member_${roomId}`;
@@ -38,8 +37,6 @@ export default function RoomPage() {
   const { id } = useParams<{ id: string }>();
   const [room, setRoom] = useState<Room | null>(null);
   const [step, setStep] = useState<PageStep>("loading");
-  const [authMode, setAuthMode] = useState<AuthMode>("phone");
-  const [nameOnly, setNameOnly] = useState("");
   const [member, setMember] = useState<Member | null>(null);
   const [matchedMember, setMatchedMember] = useState<MatchedMember | null>(null);
   const [content, setContent] = useState("");
@@ -47,8 +44,6 @@ export default function RoomPage() {
   const [loading, setLoading] = useState(false);
   const [checkingMatch, setCheckingMatch] = useState(false);
   const [error, setError] = useState("");
-
-  const isStarted = room?.status === "started";
 
   useEffect(() => {
     supabase
@@ -60,7 +55,6 @@ export default function RoomPage() {
         if (!data) return;
         setRoom(data);
 
-        // localStorage에 저장된 member ID로 자동 복원
         const savedId = localStorage.getItem(memberKey(id));
         if (savedId) {
           const { data: saved } = await supabase
@@ -85,7 +79,7 @@ export default function RoomPage() {
 
     if (existing) { await loadMemberState(existing); return; }
 
-    if (room?.status !== "open") { setError("등록된 전화번호를 찾을 수 없습니다. 이름으로 찾아보세요."); return; }
+    if (room?.status !== "open") { setError("등록된 전화번호를 찾을 수 없습니다. 방 찾기에서 다시 시도해 주세요."); return; }
 
     const res = await fetch("/api/room-member/join", {
       method: "POST",
@@ -95,36 +89,6 @@ export default function RoomPage() {
     if (!res.ok) { setError("입장에 실패했습니다."); return; }
     const { member: newMember } = await res.json();
     await loadMemberState(newMember);
-  }
-
-  async function handleNameOnlyAction() {
-    if (!nameOnly.trim()) { setError("이름을 입력해주세요."); return; }
-    setError("");
-    setLoading(true);
-
-    if (isStarted) {
-      // 방이 시작된 경우 — 기존 멤버 이름으로 찾기
-      const { data: found } = await supabase
-        .from("room_members")
-        .select("id, name, matched_to_id")
-        .eq("room_id", id)
-        .eq("name", nameOnly.trim())
-        .maybeSingle();
-      setLoading(false);
-      if (!found) { setError("입력하신 이름으로 등록된 멤버를 찾을 수 없습니다."); return; }
-      await loadMemberState(found);
-    } else {
-      // 방이 열린 경우 — 새로 입장
-      const res = await fetch("/api/room-member/join", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ roomId: id, name: nameOnly.trim(), phone: "" }),
-      });
-      setLoading(false);
-      if (!res.ok) { setError("입장에 실패했습니다."); return; }
-      const { member: newMember } = await res.json();
-      await loadMemberState(newMember);
-    }
   }
 
   async function loadMemberState(m: Member) {
@@ -176,7 +140,10 @@ export default function RoomPage() {
   if (step === "loading") {
     return (
       <main className="min-h-screen bg-[var(--bg)] flex items-center justify-center">
-        <p className="text-body-md text-[var(--muted)]">불러오는 중...</p>
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-full border-2 border-[var(--line)] border-t-[var(--accent)] animate-spin" />
+          <p className="text-body-sm text-[var(--muted)]">불러오는 중...</p>
+        </div>
       </main>
     );
   }
@@ -195,53 +162,15 @@ export default function RoomPage() {
           )}
         </div>
 
-        {/* 인증 / 멤버 찾기 */}
+        {/* 전화번호 인증 */}
         {step === "auth" && (
           <div>
-            {isStarted && (
+            {room?.status === "started" && (
               <div className="bg-[var(--paper)] rounded-[14px] px-4 py-3 mb-5 border border-[var(--line-soft)]">
-                <p className="text-body-sm text-[var(--muted)]">이미 입장하셨나요? 이름 또는 전화번호로 다시 찾을 수 있습니다.</p>
+                <p className="text-body-sm text-[var(--muted)]">이미 입장하셨나요? 전화번호로 다시 찾을 수 있습니다.</p>
               </div>
             )}
-
-            <div className="flex gap-2 mb-6">
-              <button
-                onClick={() => setAuthMode("phone")}
-                className={`flex-1 py-2 rounded-[10px] text-body-sm transition-colors ${authMode === "phone" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)] text-[var(--muted)] border border-[var(--line)]"}`}
-              >
-                전화번호 인증
-              </button>
-              <button
-                onClick={() => setAuthMode("name-only")}
-                className={`flex-1 py-2 rounded-[10px] text-body-sm transition-colors ${authMode === "name-only" ? "bg-[var(--ink)] text-[var(--paper)]" : "bg-[var(--paper)] text-[var(--muted)] border border-[var(--line)]"}`}
-              >
-                {isStarted ? "이름으로 찾기" : "이름만으로 입장"}
-              </button>
-            </div>
-
-            {authMode === "phone" && (
-              <PhoneAuth onVerified={handleVerified} />
-            )}
-
-            {authMode === "name-only" && (
-              <div className="flex flex-col gap-3">
-                {!isStarted && (
-                  <p className="text-body-sm text-[var(--muted)]">SMS를 받을 수 없습니다.</p>
-                )}
-                <input
-                  type="text"
-                  placeholder="입장할 때 입력한 이름"
-                  value={nameOnly}
-                  onChange={(e) => setNameOnly(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleNameOnlyAction()}
-                  className="w-full px-4 py-3 rounded-[14px] bg-[var(--paper)] border border-[var(--line)] text-body-md text-[var(--ink)] placeholder:text-[var(--muted)] outline-none focus:border-[var(--accent)]"
-                />
-                <Button arrow onClick={handleNameOnlyAction} disabled={loading}>
-                  {loading ? "확인 중..." : isStarted ? "찾기" : "입장하기"}
-                </Button>
-              </div>
-            )}
-
+            <PhoneAuth onVerified={handleVerified} />
             {error && <p className="mt-3 text-body-sm text-red-500">{error}</p>}
           </div>
         )}

@@ -186,16 +186,16 @@ body {
   text-transform: uppercase;
 }
 
-/* ─── 버튼 float 애니메이션 ─── */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-6px); }
+/* ─── 버튼 pulse 애니메이션 ─── */
+@keyframes btn-pulse {
+  0%, 100% { transform: scale(1); }
+  50%       { transform: scale(1.03); }
 }
-.animate-float {
-  animation: float 3.6s ease-in-out infinite;
+.animate-btn-pulse {
+  animation: btn-pulse 2.4s ease-in-out infinite;
 }
-.animate-float-delayed {
-  animation: float 3.6s ease-in-out 1.8s infinite;
+.animate-btn-pulse-delayed {
+  animation: btn-pulse 2.4s ease-in-out 1.2s infinite;
 }
 
 /* ─── 봉투 열림 애니메이션 ─── */
