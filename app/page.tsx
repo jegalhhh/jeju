@@ -18,12 +18,12 @@ export default function HomePage() {
       {/* 기능 카드 */}
       <div className="w-full max-w-[390px] flex flex-col gap-4">
         {/* 봉이 버튼 */}
-        <Link href="/wish" className="block">
+        <Link href="/wish" className="block animate-float active:scale-[0.96] transition-transform duration-150">
           <Image src="/BT1.png" alt="성산일출봉 소원 빌기" width={390} height={200} className="w-full" style={{ height: "auto" }} loading="eager" />
         </Link>
 
         {/* 바람이 버튼 */}
-        <Link href="/letter" className="block">
+        <Link href="/letter" className="block animate-float-delayed active:scale-[0.96] transition-transform duration-150">
           <Image src="/BT2.png" alt="배편 서신 편지 쓰기" width={390} height={200} className="w-full" style={{ height: "auto" }} />
         </Link>
       </div>

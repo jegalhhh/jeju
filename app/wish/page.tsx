@@ -51,8 +51,8 @@ export default function WishPage() {
         <div className="mb-10">
           <MonoLabel caps className="block mb-3">성산일출봉 · 소원</MonoLabel>
           <h1 className="text-headline-lg text-[var(--ink)]">소원 빌기</h1>
-          <p className="text-body-sm text-[var(--muted)] mt-2">
-            봉이가 소원을 듣고, 귀국 후 편지로 전합니다.
+          <p className="text-body-md text-[var(--ink)] mt-2">
+            제주에서 빈 소원과 사진을 봉이가 읽습니다. 내륙에 돌아오면, 봉이의 편지가 문자로 도착합니다.
           </p>
         </div>
 
@@ -62,7 +62,7 @@ export default function WishPage() {
             <div className="border-b border-[var(--line)]">
               <StepRow step={1} title="본인 확인" description="이름과 전화번호로 인증합니다." />
               <StepRow step={2} title="사진 + 소원" description="제주에서 찍은 사진과 소원을 남겨요." handNote="마음속 소원을" />
-              <StepRow step={3} title="발송일 선택" description="소원을 받고 싶은 날짜를 고릅니다." />
+              <StepRow step={3} title="내륙 도착일 선택" description="소원을 받고 싶은 날짜를 고릅니다." />
             </div>
             <div className="mt-8">
               <Button arrow onClick={() => setStep("auth")}>시작하기</Button>
