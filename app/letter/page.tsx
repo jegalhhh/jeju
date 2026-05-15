@@ -2,6 +2,7 @@ import Link from "next/link";
 import { createServerClient } from "@/lib/supabase-server";
 import MonoLabel from "@/components/ui/MonoLabel";
 import PaletteToggle from "@/components/PaletteToggle";
+import BackButton from "@/components/ui/BackButton";
 
 export const revalidate = 0;
 
@@ -28,6 +29,7 @@ export default async function LetterListPage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12">
       <div className="max-w-[390px] mx-auto">
+        <div className="mb-6"><BackButton /></div>
         <div className="mb-10">
           <MonoLabel caps className="block mb-3">배편 서신 · 방 목록</MonoLabel>
           <h1 className="text-headline-lg text-[var(--ink)]">배편 서신</h1>

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-server";
 import MonoLabel from "@/components/ui/MonoLabel";
+import BackButton from "@/components/ui/BackButton";
 import EnvelopeAnimation from "./EnvelopeAnimation";
 
 interface Props {
@@ -35,11 +36,9 @@ export default async function LetterDeliveryPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12">
       <div className="max-w-[390px] mx-auto">
+        <div className="mb-6"><BackButton /></div>
         {/* 바람이 헤더 */}
         <div className="text-center mb-10">
-          <div className="w-16 h-16 mx-auto rounded-[14px] border border-dashed border-[var(--line)] bg-[var(--paper)] flex flex-col items-center justify-center mb-4">
-            <span className="text-caption-mono text-[var(--muted)]">바람이</span>
-          </div>
           <MonoLabel caps className="block mb-2">배편으로 도착한 편지</MonoLabel>
           <h1 className="text-headline-md text-[var(--ink)]">{receiver?.name}님께<br/>편지가 닿았습니다</h1>
           {sendDateStr && (

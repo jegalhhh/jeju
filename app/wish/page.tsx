@@ -6,6 +6,7 @@ import PhotoUpload from "@/components/PhotoUpload";
 import Button from "@/components/ui/Button";
 import MonoLabel from "@/components/ui/MonoLabel";
 import StepRow from "@/components/ui/StepRow";
+import BackButton from "@/components/ui/BackButton";
 
 type Step = "intro" | "auth" | "wish" | "date" | "done";
 
@@ -45,6 +46,7 @@ export default function WishPage() {
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12">
       <div className="max-w-[390px] mx-auto">
+        <div className="mb-6"><BackButton /></div>
         {/* 헤더 */}
         <div className="mb-10">
           <MonoLabel caps className="block mb-3">성산일출봉 · 소원</MonoLabel>

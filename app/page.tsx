@@ -12,7 +12,7 @@ export default function HomePage() {
           제주 · No.001
         </MonoLabel>
         <h1 className="text-display text-[var(--ink)]">느린 소식</h1>
-        <p className="text-hand-md mt-2">제주의 추억을 내륙에서 받아 보세요</p>
+        <p className="text-body-sm text-[var(--muted)] mt-2">제주의 추억을 내륙에서 받아 보세요</p>
       </div>
 
       {/* 기능 카드 */}

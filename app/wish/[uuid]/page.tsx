@@ -2,6 +2,8 @@ import { notFound } from "next/navigation";
 import { createServerClient } from "@/lib/supabase-server";
 import MonoLabel from "@/components/ui/MonoLabel";
 import PaletteToggle from "@/components/PaletteToggle";
+import BackButton from "@/components/ui/BackButton";
+import FadeImage from "@/components/ui/FadeImage";
 
 interface Props {
   params: Promise<{ uuid: string }>;
@@ -26,6 +28,7 @@ export default async function WishDeliveryPage({ params }: Props) {
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12" data-palette="sunrise">
       <div className="max-w-[390px] mx-auto">
+        <div className="mb-6"><BackButton /></div>
         {/* 봉이 헤더 */}
         <div className="text-center mb-10">
           <MonoLabel caps className="block mb-2">성산일출봉 · 소원</MonoLabel>
@@ -36,11 +39,11 @@ export default async function WishDeliveryPage({ params }: Props) {
         {/* 사진 */}
         {wish.photo_url && (
           <div className="mb-8 rounded-[8px] overflow-hidden">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+            <FadeImage
               src={wish.photo_url}
               alt="제주 사진"
               className="w-full aspect-[4/3] object-cover"
+              wrapperClassName="aspect-[4/3]"
             />
           </div>
         )}

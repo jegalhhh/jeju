@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import MonoLabel from "@/components/ui/MonoLabel";
+import FadeImage from "@/components/ui/FadeImage";
 
 interface Props {
   senderName: string;
@@ -65,11 +66,11 @@ export default function EnvelopeAnimation({ senderName, receiverName, content, p
       {/* 첨부 사진 */}
       {photoUrl && (
         <div className="mb-6 rounded-[8px] overflow-hidden border border-dashed border-[var(--line)]">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <FadeImage
             src={photoUrl}
             alt="첨부 사진"
             className="w-full aspect-[4/3] object-cover"
+            wrapperClassName="aspect-[4/3]"
           />
         </div>
       )}

@@ -15,7 +15,7 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "w-full flex items-center justify-between px-[18px] py-4 rounded-[14px] text-body-md whitespace-nowrap transition-opacity disabled:opacity-40";
+    "w-full flex items-center justify-between px-[18px] py-4 rounded-[14px] text-body-md whitespace-nowrap transition-all disabled:opacity-40 active:scale-[0.97] active:opacity-80";
 
   const styles = {
     primary: "bg-[var(--ink)] text-[var(--paper)]",
