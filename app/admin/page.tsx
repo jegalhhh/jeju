@@ -129,6 +129,21 @@ export default function AdminPage() {
     fetchRooms();
   }
 
+  async function handleSendWish(wishId: string) {
+    if (!confirm("지금 바로 SMS를 발송할까요?")) return;
+    const res = await fetch(`/api/admin/wishes/${wishId}/send`, { method: "POST", headers: adminHeaders() });
+    if (res.ok) { alert("발송 완료"); fetchWishes(); }
+    else { const d = await res.json(); alert(d.error ?? "발송 실패"); }
+  }
+
+  async function handleSendRoom(roomId: number) {
+    if (!confirm("승인된 편지를 지금 바로 전송할까요?")) return;
+    const res = await fetch(`/api/admin/rooms/${roomId}/send`, { method: "POST", headers: adminHeaders() });
+    const d = await res.json();
+    if (res.ok) { alert(`${d.sent}건 발송 완료`); fetchRooms(); }
+    else alert(d.error ?? "발송 실패");
+  }
+
   const today = new Date().toISOString().split("T")[0];
 
   if (!authed) {
@@ -194,14 +209,16 @@ export default function AdminPage() {
                 <p className="text-body-sm text-[var(--muted)] mb-2">{w.wish_text.slice(0, 40)}...</p>
                 <div className="flex items-center justify-between">
                   <MonoLabel>발송일 · {w.send_date}</MonoLabel>
-                  <a
-                    href={`/wish/${w.id}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-body-sm text-[var(--accent)]"
-                  >
-                    미리보기 →
-                  </a>
+                  <div className="flex items-center gap-3">
+                    {w.status === "pending" && (
+                      <button className="text-body-sm text-green-600" onClick={() => handleSendWish(w.id)}>
+                        즉시 발송
+                      </button>
+                    )}
+                    <a href={`/wish/${w.id}`} target="_blank" rel="noreferrer" className="text-body-sm text-[var(--accent)]">
+                      미리보기 →
+                    </a>
+                  </div>
                 </div>
               </div>
             ))}
@@ -256,13 +273,18 @@ export default function AdminPage() {
                 <MonoLabel className="block mb-3">발송일 · {room.send_date} · 참여자 {room.room_members?.length ?? 0}명</MonoLabel>
 
                 {room.status === "open" && (
-                  <Button
-                    variant="secondary"
-                    onClick={() => handleStartRoom(room.id)}
-                    arrow
-                  >
+                  <Button variant="secondary" onClick={() => handleStartRoom(room.id)} arrow>
                     방 시작하기
                   </Button>
+                )}
+
+                {room.status === "started" && (
+                  <button
+                    className="text-body-sm text-green-600"
+                    onClick={() => handleSendRoom(room.id)}
+                  >
+                    승인된 편지 즉시 발송
+                  </button>
                 )}
 
                 {/* 편지 목록 */}
