@@ -8,25 +8,30 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // KST = UTC+9, 매일 00:00 UTC(=09:00 KST)에 실행
-  const now = new Date();
-  const kstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  // KST = UTC+9
+  const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
   const today = kstNow.toISOString().split("T")[0];
+  const kstHour = kstNow.getUTCHours();
 
   const supabase = createServerClient();
 
   const { data: wishes } = await supabase
     .from("wishes")
-    .select("id, phone, name")
+    .select("id, phone, name, send_time")
     .eq("send_date", today)
     .eq("status", "pending");
 
-  if (!wishes || wishes.length === 0) return NextResponse.json({ sent: 0 });
+  // send_time의 시(hour)만 비교
+  const matched = (wishes ?? []).filter(
+    (w) => parseInt((w.send_time ?? "09:00").split(":")[0], 10) === kstHour,
+  );
+
+  if (matched.length === 0) return NextResponse.json({ sent: 0 });
 
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL ?? "";
   let sent = 0;
 
-  for (const wish of wishes) {
+  for (const wish of matched) {
     try {
       await sendSms(wish.phone, `[느린 소식] ${wish.name}님의 소원이 도착했습니다.\n${baseUrl}/wish/${wish.id}`);
       await supabase.from("wishes").update({ status: "sent" }).eq("id", wish.id);

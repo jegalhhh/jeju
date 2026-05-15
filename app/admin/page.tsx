@@ -56,6 +56,7 @@ export default function AdminPage() {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [newRoomName, setNewRoomName] = useState("");
   const [newRoomDate, setNewRoomDate] = useState("");
+  const [newRoomTime, setNewRoomTime] = useState("09:00");
   const adminPwRef = useRef("");
 
   useEffect(() => {
@@ -104,9 +105,9 @@ export default function AdminPage() {
     const res = await fetch("/api/admin/rooms", {
       method: "POST",
       headers: adminHeaders(),
-      body: JSON.stringify({ name: newRoomName, sendDate: newRoomDate }),
+      body: JSON.stringify({ name: newRoomName, sendDate: newRoomDate, sendTime: newRoomTime }),
     });
-    if (res.ok) { setNewRoomName(""); setNewRoomDate(""); fetchRooms(); }
+    if (res.ok) { setNewRoomName(""); setNewRoomDate(""); setNewRoomTime("09:00"); fetchRooms(); }
   }
 
   async function handleStartRoom(roomId: number) {
@@ -229,6 +230,15 @@ export default function AdminPage() {
                   className="w-full px-3 py-2 rounded-[10px] bg-[var(--bg)] border border-[var(--line)] text-body-md text-[var(--ink)] outline-none"
                 />
 
+                <div className="flex items-center gap-2">
+                  <label className="text-body-sm text-[var(--muted)] shrink-0">발송 시각 (KST)</label>
+                  <input
+                    type="time"
+                    value={newRoomTime}
+                    onChange={(e) => setNewRoomTime(e.target.value)}
+                    className="flex-1 px-3 py-2 rounded-[10px] bg-[var(--bg)] border border-[var(--line)] text-body-md text-[var(--ink)] outline-none"
+                  />
+                </div>
                 <Button arrow onClick={handleCreateRoom}>방 만들기</Button>
               </div>
             </div>

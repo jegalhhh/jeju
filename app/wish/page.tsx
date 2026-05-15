@@ -16,6 +16,7 @@ export default function WishPage() {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [wishText, setWishText] = useState("");
   const [sendDate, setSendDate] = useState("");
+  const [sendTime, setSendTime] = useState("09:00");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -28,7 +29,7 @@ export default function WishPage() {
       const res = await fetch("/api/wish/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, phone, photoUrl, wishText, sendDate }),
+        body: JSON.stringify({ name, phone, photoUrl, wishText, sendDate, sendTime }),
       });
       if (!res.ok) throw new Error(await res.text());
       setStep("done");
@@ -116,6 +117,15 @@ export default function WishPage() {
               onChange={(e) => setSendDate(e.target.value)}
               className="w-full px-4 py-3 rounded-[14px] bg-[var(--paper)] border border-[var(--line)] text-body-md text-[var(--ink)] outline-none focus:border-[var(--accent)]"
             />
+            <div className="flex items-center gap-3 mt-3">
+              <label className="text-body-sm text-[var(--muted)] shrink-0">발송 시각 (KST)</label>
+              <input
+                type="time"
+                value={sendTime}
+                onChange={(e) => setSendTime(e.target.value)}
+                className="flex-1 px-4 py-3 rounded-[14px] bg-[var(--paper)] border border-[var(--line)] text-body-md text-[var(--ink)] outline-none focus:border-[var(--accent)]"
+              />
+            </div>
 
             <div className="mt-6 flex flex-col gap-3">
               <Button arrow onClick={handleSubmit} disabled={loading}>
@@ -138,7 +148,7 @@ export default function WishPage() {
               봉이가 소원을 간직하고 있습니다.<br/>
               {sendDate && (
                 <>
-                  {new Date(sendDate).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })}에<br/>
+                  {new Date(sendDate).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })} {sendTime}에<br/>
                 </>
               )}
               문자로 편지를 전해드릴게요.

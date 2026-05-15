@@ -8,16 +8,16 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // KST = UTC+9, 매일 00:00 UTC(=09:00 KST)에 실행
-  const now = new Date();
-  const kstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000);
+  // KST = UTC+9
+  const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
   const today = kstNow.toISOString().split("T")[0];
+  const kstHour = kstNow.getUTCHours();
 
   const supabase = createServerClient();
 
   const { data: letters } = await supabase
     .from("letters")
-    .select("id, receiver_id, room_members!receiver_id(phone, name), rooms!room_id(send_date)")
+    .select("id, receiver_id, room_members!receiver_id(phone, name), rooms!room_id(send_date, send_time)")
     .eq("status", "approved");
 
   if (!letters || letters.length === 0) return NextResponse.json({ sent: 0 });
@@ -28,6 +28,7 @@ export async function GET(req: NextRequest) {
   for (const letter of letters) {
     const room = Array.isArray(letter.rooms) ? letter.rooms[0] : letter.rooms;
     if (!room || room.send_date !== today) continue;
+    if (parseInt((room.send_time ?? "09:00").split(":")[0], 10) !== kstHour) continue;
 
     const receiver = Array.isArray(letter.room_members) ? letter.room_members[0] : letter.room_members;
     if (!receiver?.phone) continue;
