@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 interface FadeImageProps {
   src: string;
@@ -11,6 +11,11 @@ interface FadeImageProps {
 
 export default function FadeImage({ src, alt, className = "", wrapperClassName = "" }: FadeImageProps) {
   const [loaded, setLoaded] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current?.complete) setLoaded(true);
+  }, []);
 
   return (
     <div className={`relative ${wrapperClassName}`}>
@@ -19,6 +24,7 @@ export default function FadeImage({ src, alt, className = "", wrapperClassName =
       )}
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
+        ref={imgRef}
         src={src}
         alt={alt}
         onLoad={() => setLoaded(true)}
