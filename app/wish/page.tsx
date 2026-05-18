@@ -43,6 +43,17 @@ export default function WishPage() {
 
   const today = new Date().toISOString().split("T")[0];
 
+  // KST 기준 다음 정시 계산
+  const kstNow = new Date(Date.now() + 9 * 60 * 60 * 1000);
+  const todayKST = kstNow.toISOString().split("T")[0];
+  const nextHourKST = String((kstNow.getUTCHours() + 1) % 24).padStart(2, "0") + ":00";
+  const minTime = sendDate === todayKST ? nextHourKST : "00:00";
+
+  function handleDateChange(date: string) {
+    setSendDate(date);
+    if (date === todayKST && sendTime <= nextHourKST) setSendTime(nextHourKST);
+  }
+
   return (
     <main className="min-h-screen bg-[var(--bg)] px-7 py-12">
       <div className="max-w-[390px] mx-auto">
@@ -116,13 +127,15 @@ export default function WishPage() {
               type="date"
               min={today}
               value={sendDate}
-              onChange={(e) => setSendDate(e.target.value)}
+              onChange={(e) => handleDateChange(e.target.value)}
               className="w-full px-4 py-3 rounded-[14px] bg-[var(--paper)] border border-[var(--line)] text-body-md text-[var(--ink)] outline-none focus:border-[var(--accent)]"
             />
             <div className="flex items-center gap-3 mt-3">
               <label className="text-body-sm text-[var(--muted)] shrink-0">발송 시각 (KST)</label>
               <input
                 type="time"
+                step="3600"
+                min={minTime}
                 value={sendTime}
                 onChange={(e) => setSendTime(e.target.value)}
                 className="flex-1 px-4 py-3 rounded-[14px] bg-[var(--paper)] border border-[var(--line)] text-body-md text-[var(--ink)] outline-none focus:border-[var(--accent)]"
