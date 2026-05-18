@@ -11,6 +11,7 @@ interface Wish {
   name: string;
   wish_text: string;
   send_date: string;
+  send_time: string;
   status: string;
 }
 
@@ -208,7 +209,7 @@ export default function AdminPage() {
                 </div>
                 <p className="text-body-sm text-[var(--muted)] mb-2">{w.wish_text.slice(0, 40)}...</p>
                 <div className="flex items-center justify-between">
-                  <MonoLabel>발송일 · {w.send_date}</MonoLabel>
+                  <MonoLabel>발송 · {w.send_date} {w.send_time ?? "09:00"} KST</MonoLabel>
                   <div className="flex items-center gap-3">
                     {w.status === "pending" && (
                       <button className="text-body-sm text-green-600" onClick={() => handleSendWish(w.id)}>

@@ -45,6 +45,7 @@ export default function PhotoUpload({ onUploaded }: PhotoUploadProps) {
       const res = await fetch("/api/upload", { method: "POST", body: form });
       if (!res.ok) throw new Error(await res.text());
       const { url } = await res.json();
+      setPreview(url);
       onUploaded(url);
     } catch (e: unknown) {
       setError(e instanceof Error ? e.message : "업로드에 실패했습니다");
